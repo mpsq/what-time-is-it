@@ -1,0 +1,32 @@
+#!/bin/bash
+
+OLD_MINUTES=$(cat README.md | grep ":([0-9]{1,2}):" -o -E | grep "[0-9]{1,2}" -o -E)
+
+NOW=$(date -u)
+FORMATTED=$(grep "[0-9]{1,2}:[0-9]{1,2}:[0-9]{1,2}" -o -E <<< $NOW)
+MINUTES=$(echo $FORMATTED | grep ":([0-9]{1,2}):" -o -E | grep "[0-9]{1,2}" -o -E)
+MAGIC=5
+
+echo $SECONDS
+echo $OLD_SECONDS
+
+if (( MINUTES == OLD_MINUTES )); then
+    SECONDS=$(echo $FORMATTED | grep ":[0-9]{1,2}$" -o -E | grep "[0-9]{1,2}" -o -E | sed 's/^0*//')
+    WAIT=$((60 - MAGIC - SECONDS))
+
+    if (( WAIT > MAGIC )); then
+        sleep $WAIT
+    fi
+fi
+
+rm -rf tmp
+mkdir tmp
+cd tmp
+git config --global user.email $GITHUB_EMAIL
+git init
+git remote add origin https://$GITHUB_USER:$GITHUB_PASSWORD@github.com/mpsq/what-time-is-it.git
+git pull origin master --depth 1
+echo "# ${FORMATTED} (UTC)" > README.md
+git add README.md
+git commit -m "update README.md"
+git push -u origin master

@@ -1,0 +1,14 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: alpine
+
+    steps:
+      - checkout
+      - run:
+          name: deps
+          command: apk add --update --no-cache bash coreutils git grep sed
+      - run:
+          name: set
+          command: src/set-time
