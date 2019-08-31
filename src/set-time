@@ -12,7 +12,6 @@ if (( MINUTES == OLD_MINUTES )); then
     sleep $MAGIC
 fi
 
-# Cleanup
 rm -rf tmp
 mkdir tmp
 cd tmp
